@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gwiezdny Oddział</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&family=Russo+One&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="wrap">
+    <canvas id="game"></canvas>
+
+    <!-- MENU GŁÓWNE -->
+    <div id="menu" class="overlay">
+      <div class="menu">
+        <h1 class="title">GWIEZDNY ODDZIAŁ</h1>
+        <p class="subtitle">Wybierz jednostkę, walcz z droidami i ulepszaj swój oddział!</p>
+        <div class="menu-stats">
+          <div class="stat"><span>Jednostka</span><b id="menu-unit">Żołnierz</b></div>
+          <div class="stat"><span>Rekord</span><b id="menu-best">0 m</b></div>
+          <div class="stat"><span>Kredyty</span><b><i class="coin"></i><span id="menu-credits">0</span></b></div>
+        </div>
+        <div id="menu-refund" class="refund hidden"></div>
+        <div class="row">
+          <button class="btn primary big" id="btn-play">▶ Graj</button>
+          <button class="btn big" id="btn-shop">🛒 Sklep</button>
+        </div>
+        <div class="controls">
+          <div><kbd>A</kbd><kbd>D</kbd><kbd>←</kbd><kbd>→</kbd> chodzenie</div>
+          <div><kbd>Spacja</kbd><kbd>W</kbd><kbd>↑</kbd> skok</div>
+          <div><kbd>J</kbd><kbd>LPM</kbd> strzał (myszką celujesz)</div>
+          <div><kbd>S</kbd><kbd>↓</kbd> kucnięcie / szybkie spadanie</div>
+          <div><kbd>K</kbd><kbd>E</kbd><kbd>PPM</kbd> umiejętność jednostki</div>
+          <div><kbd>L</kbd><kbd>Q</kbd><kbd>Shift</kbd> zdolność specjalna</div>
+        </div>
+        <div class="tip">💡 Skacz wrogom na głowy! &nbsp;·&nbsp; <kbd>P</kbd> pauza &nbsp;·&nbsp; <kbd>M</kbd> dźwięk &nbsp;·&nbsp; <kbd>Enter</kbd> = dalej</div>
+      </div>
+      <button class="btn small corner" id="btn-mute">🔊 Dźwięk: wł.</button>
+    </div>
+
+    <!-- WYBÓR JEDNOSTKI -->
+    <div id="select" class="overlay hidden">
+      <div class="select panel">
+        <h2>Wybierz jednostkę</h2>
+        <div id="unit-grid" class="units"></div>
+        <div class="shop-foot">
+          <button class="btn" id="btn-sel-back">← Menu</button>
+          <span class="hint">Klawisze <kbd>1</kbd>–<kbd>4</kbd> albo <kbd>←</kbd> <kbd>→</kbd> · <kbd>Enter</kbd> = start</span>
+          <button class="btn" id="btn-sel-shop">🛒 Sklep</button>
+          <button class="btn primary" id="btn-sel-play">▶ Do boju!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKLEP -->
+    <div id="shop" class="overlay hidden">
+      <div class="shop panel">
+        <div class="shop-head">
+          <h2>Zbrojownia</h2>
+          <div class="tabs">
+            <button class="tab active" data-tab="upgrades">Ulepszenia</button>
+            <button class="tab" data-tab="paints">Barwy pancerza</button>
+          </div>
+          <div class="shop-unit">Wartości dla: <b id="shop-unit">Żołnierz</b></div>
+          <div class="wallet"><i class="coin"></i><b id="shop-credits">0</b></div>
+        </div>
+        <div id="shop-grid" class="grid"></div>
+        <div class="shop-foot">
+          <button class="btn" id="btn-shop-back">← Menu</button>
+          <button class="btn small danger" id="btn-reset">Resetuj postęp</button>
+          <button class="btn" id="btn-shop-units">👥 Jednostka</button>
+          <button class="btn primary" id="btn-shop-play">▶ Do boju!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KONIEC MISJI -->
+    <div id="gameover" class="overlay hidden">
+      <div class="panel go">
+        <h2 id="go-title">Koniec misji!</h2>
+        <div class="go-unit">Jednostka: <b id="go-unit"></b></div>
+        <div id="go-record" class="record hidden">🏆 Nowy rekord!</div>
+        <div class="go-stats">
+          <div><span>Dystans</span><b id="go-distance"></b></div>
+          <div><span>Pokonani wrogowie</span><b id="go-kills"></b></div>
+          <div><span>Pokonani bossowie</span><b id="go-bosses"></b></div>
+          <div><span>Najlepsze combo</span><b id="go-combo"></b></div>
+          <div><span>Zebrane kredyty</span><b id="go-collected"></b></div>
+          <div><span>Bonus za dystans</span><b id="go-bonus"></b></div>
+        </div>
+        <div class="go-total">Zarobione: <i class="coin"></i><b id="go-total"></b></div>
+        <div class="go-wallet">Masz teraz: <b id="go-wallet"></b> kredytów – wydaj je w zbrojowni!</div>
+        <div class="row">
+          <button class="btn" id="btn-go-menu">Menu</button>
+          <button class="btn" id="btn-go-shop">🛒 Sklep</button>
+          <button class="btn" id="btn-go-units">👥 Jednostka</button>
+          <button class="btn primary" id="btn-go-again">↻ Jeszcze raz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUZA -->
+    <div id="pause" class="overlay hidden">
+      <div class="panel pause">
+        <h2>Pauza</h2>
+        <div class="col">
+          <button class="btn primary" id="btn-resume">▶ Wznów</button>
+          <button class="btn" id="btn-pause-mute">🔊 Dźwięk: wł.</button>
+          <button class="btn" id="btn-quit">Zakończ misję (zachowaj kredyty)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="utils.js"></script>
+  <script src="sound.js"></script>
+  <script src="draw.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
